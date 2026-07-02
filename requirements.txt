@@ -1,0 +1,9 @@
+streamlit>=1.41.0
+opencv-python-headless>=4.10.0.84
+Pillow>=11.1.0
+numpy>=2.1.2
+SQLAlchemy>=2.0.36
+psycopg[binary]>=3.2.3
+python-dotenv>=1.0.1
+faster-whisper>=1.0.3
+pandas>=2.2.3

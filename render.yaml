@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: computer-vision-streamlit
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: UPLOAD_FOLDER
+        value: assets/images
+      - key: SECRET_KEY
+        value: gerado-em-producao-automatico
