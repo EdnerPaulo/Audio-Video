@@ -14,9 +14,9 @@ def render_history_component(dados: list, controller):
     # Barra de Ferramentas de Filtragem e Exportação
     col_search, col_date = st.columns(2)
     with col_search:
-        search_query = st.text_input("🔍 Filtrar por objetos ou descrição:")
+        search_query = st.text_input("🔍 Filtrar por objetos ou descrição:", key="search_input")
     with col_date:
-        filtro_data = st.text_input("📅 Filtrar por Data (DD/MM/AAAA):")
+        filtro_data = st.text_input("📅 Filtrar por Data (DD/MM/AAAA):", key="date_input")
 
     # Filtragem dos dados na camada View
     dados_filtrados = dados
@@ -31,9 +31,9 @@ def render_history_component(dados: list, controller):
     
     c_exp1, c_exp2 = st.columns(2)
     with c_exp1:
-        st.download_button("📥 Exportar CSV", data=csv_data, file_name="historico_cv.csv", mime="text/csv")
+        st.download_button("📥 Exportar CSV", data=csv_data, file_name="historico_cv.csv", mime="text/csv", key="btn_csv")
     with c_exp2:
-        st.download_button("📥 Exportar JSON", data=json_data, file_name="historico_cv.json", mime="application/json")
+        st.download_button("📥 Exportar JSON", data=json_data, file_name="historico_cv.json", mime="application/json", key="btn_json")
 
     st.markdown("---")
 
@@ -73,7 +73,7 @@ def render_history_component(dados: list, controller):
 
                 # Gestão de Áudio Retrospectiva
                 st.markdown("---")
-                audio_bytes_vinc = st.audio_input("Vincular/Atualizar Áudio:", key=st.write = f"aud_vinc_{item['id']}")
+                audio_bytes_vinc = st.audio_input("Vincular/Atualizar Áudio:", key=f"aud_vinc_{item['id']}")
                 if audio_bytes_vinc is not None:
                     if st.button("💾 Salvar Novo Áudio", key=f"save_aud_{item['id']}"):
                         controller.gerenciar_audio_registro(item['id'], audio_bytes_vinc, "vincular")
