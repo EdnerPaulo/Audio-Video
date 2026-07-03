@@ -1,5 +1,5 @@
 streamlit>=1.41.0
-opencv-python-headless>=4.10.0.84
+opencv-python-headless==4.9.0.80
 Pillow>=11.1.0
 numpy>=2.1.2
 SQLAlchemy>=2.0.36
