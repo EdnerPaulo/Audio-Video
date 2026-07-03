@@ -8,20 +8,25 @@ from config.settings import logger
 
 class CVService:
     def __init__(self):
+        # Código híbrido: Funciona no seu Windows local e no Linux do Render
         try:
-            # Solução de contorno para o bug de carregamento no ambiente headless do Linux/Render
-            # Força o Python a mapear e carregar explicitamente o construtor do classificador
-            from cv2 import CascadeClassifier
-            
-            caminho_xml = os.path.join(cv2.data.haarcascades, 'haarcascade_frontalface_default.xml')
-            self.face_cascade = CascadeClassifier(caminho_xml)
-            
-            # Validação de segurança para garantir que o arquivo XML foi aberto com sucesso
-            if self.face_cascade.empty():
-                raise FileNotFoundError("Não foi possível inicializar o arquivo xml do Haar Cascade.")
+            # Força o carregamento do xml usando caminhos universais da biblioteca
+            base_cascade_dir = getattr(cv2, 'data', None)
+            if base_cascade_dir and hasattr(base_cascade_dir, 'haarcascades'):
+                caminho_xml = os.path.join(base_cascade_dir.haarcascades, 'haarcascade_frontalface_default.xml')
+            else:
+                caminho_xml = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
                 
-        except (AttributeError, ImportError):
-            # Fallback caso a importação direta falhe
+            # Instanciação direta e limpa
+            self.face_cascade = cv2.CascadeClassifier(caminho_xml)
+            
+            # Validação se o arquivo realmente abriu
+            if self.face_cascade.empty():
+                raise FileNotFoundError("O arquivo Haar Cascade não pôde ser carregado.")
+                
+        except Exception as e:
+            logger.warning(f"Falha na primeira tentativa de inicialização: {str(e)}. Aplicando fallback.")
+            # Fallback tradicional de segurança
             self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
     def analisar_imagem(self, image_bytes: bytes) -> Dict[str, Any]:
