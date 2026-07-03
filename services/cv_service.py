@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 from PIL import Image
 from datetime import datetime
 from typing import Dict, Any
@@ -7,8 +8,21 @@ from config.settings import logger
 
 class CVService:
     def __init__(self):
-        # Carrega o classificador de faces nativo do OpenCV (Haar Cascade)
-        self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        try:
+            # Solução de contorno para o bug de carregamento no ambiente headless do Linux/Render
+            # Força o Python a mapear e carregar explicitamente o construtor do classificador
+            from cv2 import CascadeClassifier
+            
+            caminho_xml = os.path.join(cv2.data.haarcascades, 'haarcascade_frontalface_default.xml')
+            self.face_cascade = CascadeClassifier(caminho_xml)
+            
+            # Validação de segurança para garantir que o arquivo XML foi aberto com sucesso
+            if self.face_cascade.empty():
+                raise FileNotFoundError("Não foi possível inicializar o arquivo xml do Haar Cascade.")
+                
+        except (AttributeError, ImportError):
+            # Fallback caso a importação direta falhe
+            self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
     def analisar_imagem(self, image_bytes: bytes) -> Dict[str, Any]:
         """Executa processamento estatístico e analítico nativo na imagem capturada."""
